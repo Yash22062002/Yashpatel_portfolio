@@ -6,5 +6,5 @@ import react from '@vitejs/plugin-react';
 // (a CNAME file in public/, same pattern Arun used), change base back to '/'.
 export default defineConfig({
   plugins: [react()],
-  base: '/Dashboard_frontend/',
+  base: '/Yashpatel_portfolio/',
 });
