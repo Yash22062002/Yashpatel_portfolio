@@ -4,6 +4,8 @@ A one page React portfolio with a rotating DNA double helix hero built in
 Three.js, GSAP scroll reveals, Lenis smooth scrolling, and a floating AI
 chat widget that talks to the FastAPI backend in the `backend` folder.
 
+click on https://yash22062002.github.io/Yashpatel_portfolio/
+
 ## Run it locally
 
 ```bash
@@ -11,7 +13,7 @@ cd frontend
 npm install
 cp .env.example .env
 # edit .env, point VITE_CHAT_API_URL at your backend, local or deployed
-npm run dev
+cp .env.example .env
 ```
 
 Open the URL it prints, usually `http://localhost:5173`.
