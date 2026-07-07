@@ -5,15 +5,16 @@ const Glow = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 360px;
-  height: 360px;
-  margin-left: -180px;
-  margin-top: -180px;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  margin-top: -14px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.18) 0%,
-    rgba(45, 212, 191, 0) 70%
+    rgba(45, 212, 191, 0.9) 0%,
+    rgba(45, 212, 191, 0.25) 45%,
+    rgba(45, 212, 191, 0) 75%
   );
   pointer-events: none;
   z-index: 1;
