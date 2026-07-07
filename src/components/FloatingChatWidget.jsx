@@ -34,12 +34,16 @@ const Greeting = styled.div`
   padding: 0.75rem 1rem;
   border-radius: 12px;
   background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 2px solid #ffffff;
   color: ${({ theme }) => theme.colors.text};
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
   line-height: 1.4;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
+  transition: opacity 0.5s ease;
 
   &::after {
     content: '';
@@ -49,8 +53,8 @@ const Greeting = styled.div`
     width: 16px;
     height: 16px;
     background: ${({ theme }) => theme.colors.surface};
-    border-right: 1px solid ${({ theme }) => theme.colors.border};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
     transform: rotate(45deg);
   }
 `;
@@ -201,19 +205,25 @@ const GREETING_VISIBLE_MS = 4000;
 
 export default function FloatingChatWidget() {
   const [open, setOpen] = useState(false);
-  const [showGreeting, setShowGreeting] = useState(false);
+  const [autoGreeting, setAutoGreeting] = useState(false);
+  const [hoverGreeting, setHoverGreeting] = useState(false);
   const [messages, setMessages] = useState([WELCOME]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
+  const hoverHideTimeout = useRef(null);
+
+  // Visible if either the automatic on-load timer or a hover is keeping it
+  // up, but never while the chat panel itself is open.
+  const greetingVisible = (autoGreeting || hoverGreeting) && !open;
 
   // Auto pop the greeting bubble shortly after the page loads, then hide
   // it again on its own, the same pattern a lot of live chat widgets use.
   useEffect(() => {
-    const showTimer = setTimeout(() => setShowGreeting(true), GREETING_SHOW_DELAY_MS);
+    const showTimer = setTimeout(() => setAutoGreeting(true), GREETING_SHOW_DELAY_MS);
     const hideTimer = setTimeout(
-      () => setShowGreeting(false),
+      () => setAutoGreeting(false),
       GREETING_SHOW_DELAY_MS + GREETING_VISIBLE_MS,
     );
     return () => {
@@ -235,6 +245,12 @@ export default function FloatingChatWidget() {
     }
   }, [input]);
 
+  useEffect(() => {
+    return () => {
+      if (hoverHideTimeout.current) clearTimeout(hoverHideTimeout.current);
+    };
+  }, []);
+
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -244,7 +260,30 @@ export default function FloatingChatWidget() {
 
   function openChat() {
     setOpen(true);
-    setShowGreeting(false);
+    setAutoGreeting(false);
+    setHoverGreeting(false);
+    if (hoverHideTimeout.current) {
+      clearTimeout(hoverHideTimeout.current);
+      hoverHideTimeout.current = null;
+    }
+  }
+
+  // Hovering the button (or the bubble itself, so moving toward it to read
+  // or click doesn't make it vanish) keeps the greeting up. Leaving starts
+  // a short delay before it fades, rather than disappearing instantly.
+  function handleGreetingAreaEnter() {
+    if (open) return;
+    if (hoverHideTimeout.current) {
+      clearTimeout(hoverHideTimeout.current);
+      hoverHideTimeout.current = null;
+    }
+    setHoverGreeting(true);
+  }
+
+  function handleGreetingAreaLeave() {
+    hoverHideTimeout.current = setTimeout(() => {
+      setHoverGreeting(false);
+    }, 1000);
   }
 
   async function sendMessage(e) {
@@ -316,9 +355,14 @@ export default function FloatingChatWidget() {
 
   return (
     <>
-      {showGreeting && !open && (
-        <Greeting onClick={openChat}>{GREETING_TEXT}</Greeting>
-      )}
+      <Greeting
+        $visible={greetingVisible}
+        onClick={openChat}
+        onMouseEnter={handleGreetingAreaEnter}
+        onMouseLeave={handleGreetingAreaLeave}
+      >
+        {GREETING_TEXT}
+      </Greeting>
 
       {open && (
         <Panel>
@@ -358,8 +402,19 @@ export default function FloatingChatWidget() {
         </Panel>
       )}
 
-      <Bubble onClick={() => (open ? setOpen(false) : openChat())} aria-label="Toggle chat with Jarvis">
-        <BubbleImage src="/jarvis-icon.png" alt="Jarvis" />
+      <Bubble
+        onClick={() => (open ? setOpen(false) : openChat())}
+        onMouseEnter={handleGreetingAreaEnter}
+        onMouseLeave={handleGreetingAreaLeave}
+        aria-label="Toggle chat with Jarvis"
+      >
+        <BubbleImage
+          src={`${import.meta.env.BASE_URL}jarvis-icon.png`}
+          alt="Jarvis"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+          }}
+        />
       </Bubble>
     </>
   );
