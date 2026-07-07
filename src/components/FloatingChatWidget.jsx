@@ -8,21 +8,56 @@ const Bubble = styled.button`
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 100;
-  width: 56px;
-  height: 56px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
-  border: none;
+  border: 2px solid ${({ theme }) => theme.colors.accentA};
   cursor: pointer;
-  background: ${({ theme }) => theme.colors.accentA};
-  color: #05100E;
-  font-family: ${({ theme }) => theme.font.mono};
-  font-weight: 600;
-  font-size: 0.75rem;
+  padding: 0;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+`;
+
+const BubbleImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+`;
+
+const Greeting = styled.div`
+  position: fixed;
+  bottom: 6.75rem;
+  right: 1.5rem;
+  z-index: 100;
+  max-width: 230px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 0.9rem;
+  line-height: 1.4;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 30px;
+    width: 16px;
+    height: 16px;
+    background: ${({ theme }) => theme.colors.surface};
+    border-right: 1px solid ${({ theme }) => theme.colors.border};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+    transform: rotate(45deg);
+  }
 `;
 
 const Panel = styled.div`
   position: fixed;
-  bottom: 5.5rem;
+  bottom: 6rem;
   right: 1.5rem;
   z-index: 100;
   width: min(360px, calc(100vw - 3rem));
@@ -157,16 +192,35 @@ const Send = styled.button`
 
 const WELCOME = {
   role: 'assistant',
-  content: "Ask me about Yash's projects, skills, or background.",
+  content: 'Hi! I am Jarvis, Yash\u2019s GenAI chatbot. How may I help you today?',
 };
+
+const GREETING_TEXT = 'Hi! I am Jarvis (Yash\u2019s GenAI Chatbot), how may I help you today?';
+const GREETING_SHOW_DELAY_MS = 800;
+const GREETING_VISIBLE_MS = 4000;
 
 export default function FloatingChatWidget() {
   const [open, setOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(false);
   const [messages, setMessages] = useState([WELCOME]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
+
+  // Auto pop the greeting bubble shortly after the page loads, then hide
+  // it again on its own, the same pattern a lot of live chat widgets use.
+  useEffect(() => {
+    const showTimer = setTimeout(() => setShowGreeting(true), GREETING_SHOW_DELAY_MS);
+    const hideTimer = setTimeout(
+      () => setShowGreeting(false),
+      GREETING_SHOW_DELAY_MS + GREETING_VISIBLE_MS,
+    );
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -188,13 +242,17 @@ export default function FloatingChatWidget() {
     }
   }
 
+  function openChat() {
+    setOpen(true);
+    setShowGreeting(false);
+  }
+
   async function sendMessage(e) {
     e.preventDefault();
     const text = input.trim();
     if (!text || loading) return;
 
     const nextMessages = [...messages, { role: 'user', content: text }];
-    // A placeholder assistant message that gets filled in as chunks stream in.
     setMessages([...nextMessages, { role: 'assistant', content: '' }]);
     setInput('');
     setLoading(true);
@@ -258,9 +316,13 @@ export default function FloatingChatWidget() {
 
   return (
     <>
+      {showGreeting && !open && (
+        <Greeting onClick={openChat}>{GREETING_TEXT}</Greeting>
+      )}
+
       {open && (
         <Panel>
-          <Header>Ask about Yash</Header>
+          <Header>Jarvis</Header>
           <Messages ref={scrollRef}>
             {messages.map((m, i) => {
               const isStreamingPlaceholder =
@@ -288,15 +350,16 @@ export default function FloatingChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a question"
+              placeholder="Write a message..."
               rows={1}
             />
             <Send type="submit">Send</Send>
           </InputRow>
         </Panel>
       )}
-      <Bubble onClick={() => setOpen((v) => !v)} aria-label="Toggle chat">
-        {open ? 'Close' : 'Ask'}
+
+      <Bubble onClick={() => (open ? setOpen(false) : openChat())} aria-label="Toggle chat with Jarvis">
+        <BubbleImage src="/jarvis-icon.png" alt="Jarvis" />
       </Bubble>
     </>
   );
