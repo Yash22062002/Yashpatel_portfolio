@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Reveal from '../components/Reveal.jsx';
 import SectionIntro from '../components/SectionIntro.jsx';
-import { MapPinIcon } from '../components/Icons.jsx';
+import { MapPinIcon, ArrowRightIcon } from '../components/Icons.jsx';
 
 const timeline = [
   {
@@ -214,9 +214,75 @@ const Tag = styled.span`
   color: ${({ theme }) => theme.colors.accentA};
 `;
 
+const ScrollHint = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.textDim};
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 0.75rem;
+
+  svg {
+    animation: bob 1.6s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: rotate(90deg) translateX(0);
+    }
+    50% {
+      transform: rotate(90deg) translateX(3px);
+    }
+  }
+`;
+
 export default function Career() {
   const [active, setActive] = useState(0);
   const entry = timeline[active];
+  const panelRef = useRef(null);
+  const lockRef = useRef(false);
+  const timeoutRef = useRef(null);
+
+  // Clear any pending lock-release timer only when the component itself
+  // unmounts, not on every entry change.
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  // While the cursor is over the panel, the wheel steps through timeline
+  // entries instead of scrolling the page. Once at the first or last
+  // entry, scrolling in that direction is handed back to the page so
+  // people never get stuck inside the box.
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return undefined;
+
+    function handleWheel(e) {
+      const goingDown = e.deltaY > 0;
+      const canAdvance = goingDown ? active < timeline.length - 1 : active > 0;
+      if (!canAdvance) return;
+
+      e.preventDefault();
+      if (lockRef.current) return;
+
+      lockRef.current = true;
+      setActive((a) =>
+        goingDown ? Math.min(a + 1, timeline.length - 1) : Math.max(a - 1, 0),
+      );
+      timeoutRef.current = setTimeout(() => {
+        lockRef.current = false;
+      }, 700);
+    }
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, [active]);
 
   return (
     <section id="career">
@@ -240,7 +306,7 @@ export default function Career() {
           ))}
         </TimelineList>
         <Reveal key={entry.title + entry.range}>
-          <Panel>
+          <Panel ref={panelRef}>
             <PRange>{entry.range}</PRange>
             <PTitle>{entry.title}</PTitle>
             <POrg>{entry.org}</POrg>
@@ -262,6 +328,12 @@ export default function Career() {
                   <Tag key={tag}>{tag}</Tag>
                 ))}
               </Tags>
+            )}
+            {active < timeline.length - 1 && (
+              <ScrollHint>
+                <ArrowRightIcon size={13} />
+                Scroll for next role
+              </ScrollHint>
             )}
           </Panel>
         </Reveal>
