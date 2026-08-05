@@ -8,6 +8,7 @@ import About from './sections/About.jsx';
 import Career from './sections/Career.jsx';
 import Skills from './sections/Skills.jsx';
 import Projects from './sections/Projects.jsx';
+import Certifications from './sections/Certifications.jsx';
 import Contact from './sections/Contact.jsx';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Career />
         <Skills />
         <Projects />
+        <Certifications />
         <Contact />
       </main>
       <Footer />

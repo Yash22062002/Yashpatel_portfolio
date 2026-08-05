@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import DNAHelix from '../components/DNAHelix.jsx';
 import TypedRole from '../components/TypedRole.jsx';
+import { MapPinIcon } from '../components/Icons.jsx';
 
 const Wrap = styled.section`
   min-height: 100vh;
@@ -93,6 +94,92 @@ const Actions = styled.div`
   }
 `;
 
+const MetaRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  color: ${({ theme }) => theme.colors.textDim};
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem;
+
+  @media (max-width: 860px) {
+    justify-content: center;
+  }
+`;
+
+const Location = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+`;
+
+const OpenToWork = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const Pulse = styled.span`
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.accentA};
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid ${({ theme }) => theme.colors.accentA};
+    animation: pulse 2.2s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.6);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
+`;
+
+const StatsRow = styled.div`
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 860px) {
+    justify-content: center;
+    text-align: center;
+  }
+`;
+
+const StatNumber = styled.p`
+  font-family: ${({ theme }) => theme.font.display};
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.accentA};
+  margin: 0;
+`;
+
+const StatLabel = styled.p`
+  font-size: 0.82rem;
+  color: ${({ theme }) => theme.colors.textDim};
+  margin: 0.15rem 0 0;
+`;
+
+const stats = [
+  { number: '120+', label: 'mammalian species analyzed' },
+  { number: '20K+', label: 'genes screened for SAEs' },
+  { number: '300', label: 'parallel SLURM jobs run' },
+];
+
 const PrimaryButton = styled.a`
   display: inline-block;
   padding: 0.85rem 1.6rem;
@@ -128,6 +215,16 @@ export default function Hero() {
         <RoleLine>
           I'm a <TypedRole />
         </RoleLine>
+        <MetaRow>
+          <Location>
+            <MapPinIcon size={15} />
+            Toronto, ON
+          </Location>
+          <OpenToWork>
+            <Pulse />
+            Open to opportunities
+          </OpenToWork>
+        </MetaRow>
         <Subtitle>
           I build pipelines that turn raw sequencing data into biological
           insight, from comparative genomics on HPC clusters to machine
@@ -140,6 +237,14 @@ export default function Hero() {
           <PrimaryButton href="#projects">View my work</PrimaryButton>
           <SecondaryButton href="#contact">Get in touch</SecondaryButton>
         </Actions>
+        <StatsRow>
+          {stats.map((s) => (
+            <div key={s.label}>
+              <StatNumber>{s.number}</StatNumber>
+              <StatLabel>{s.label}</StatLabel>
+            </div>
+          ))}
+        </StatsRow>
       </TextCol>
       <CanvasCol>
         <DNAHelix />
