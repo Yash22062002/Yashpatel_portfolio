@@ -244,45 +244,44 @@ export default function Career() {
   const [active, setActive] = useState(0);
   const entry = timeline[active];
   const panelRef = useRef(null);
-  const lockRef = useRef(false);
-  const timeoutRef = useRef(null);
+  // A continuous position, independent of React's render cycle, so every
+  // wheel tick reads and writes the true up to date value instead of a
+  // value captured in a stale closure.
+  const progressRef = useRef(0);
 
-  // Clear any pending lock-release timer only when the component itself
-  // unmounts, not on every entry change.
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  function goTo(index) {
+    const clamped = Math.max(0, Math.min(timeline.length - 1, index));
+    progressRef.current = clamped;
+    setActive(clamped);
+  }
 
-  // While the cursor is over the panel, the wheel steps through timeline
-  // entries instead of scrolling the page. Once at the first or last
-  // entry, scrolling in that direction is handed back to the page so
-  // people never get stuck inside the box.
+  // While the cursor is over the panel, the wheel moves through timeline
+  // entries instead of scrolling the page. How far one gesture travels
+  // is proportional to how hard or fast it was, a light trackpad nudge
+  // eases one entry at a time, a hard fast scroll can roll straight
+  // through to the end. At either edge, scrolling further in that
+  // direction is handed back to the page so nobody gets stuck.
   useEffect(() => {
     const el = panelRef.current;
     if (!el) return undefined;
 
     function handleWheel(e) {
+      const pos = progressRef.current;
       const goingDown = e.deltaY > 0;
-      const canAdvance = goingDown ? active < timeline.length - 1 : active > 0;
-      if (!canAdvance) return;
+      const atEdge = goingDown ? pos >= timeline.length - 1 : pos <= 0;
+      if (atEdge) return;
 
       e.preventDefault();
-      if (lockRef.current) return;
 
-      lockRef.current = true;
-      setActive((a) =>
-        goingDown ? Math.min(a + 1, timeline.length - 1) : Math.max(a - 1, 0),
-      );
-      timeoutRef.current = setTimeout(() => {
-        lockRef.current = false;
-      }, 700);
+      const next = pos + e.deltaY / 110;
+      const clamped = Math.max(0, Math.min(timeline.length - 1, next));
+      progressRef.current = clamped;
+      setActive(Math.round(clamped));
     }
 
     el.addEventListener('wheel', handleWheel, { passive: false });
     return () => el.removeEventListener('wheel', handleWheel);
-  }, [active]);
+  }, []);
 
   return (
     <section id="career">
@@ -298,7 +297,7 @@ export default function Career() {
             <TimelineButton
               key={t.title + t.range}
               $active={i === active}
-              onClick={() => setActive(i)}
+              onClick={() => goTo(i)}
             >
               <TRange>{t.range}</TRange>
               <TTitle>{t.org}</TTitle>
