@@ -200,12 +200,9 @@ const WELCOME = {
 };
 
 const GREETING_TEXT = 'Hi! I am Jarvis (Yash\u2019s GenAI Chatbot), how may I help you today?';
-const GREETING_SHOW_DELAY_MS = 800;
-const GREETING_VISIBLE_MS = 4000;
 
 export default function FloatingChatWidget() {
   const [open, setOpen] = useState(false);
-  const [autoGreeting, setAutoGreeting] = useState(false);
   const [hoverGreeting, setHoverGreeting] = useState(false);
   const [messages, setMessages] = useState([WELCOME]);
   const [input, setInput] = useState('');
@@ -214,23 +211,10 @@ export default function FloatingChatWidget() {
   const textareaRef = useRef(null);
   const hoverHideTimeout = useRef(null);
 
-  // Visible if either the automatic on-load timer or a hover is keeping it
-  // up, but never while the chat panel itself is open.
-  const greetingVisible = (autoGreeting || hoverGreeting) && !open;
-
-  // Auto pop the greeting bubble shortly after the page loads, then hide
-  // it again on its own, the same pattern a lot of live chat widgets use.
-  useEffect(() => {
-    const showTimer = setTimeout(() => setAutoGreeting(true), GREETING_SHOW_DELAY_MS);
-    const hideTimer = setTimeout(
-      () => setAutoGreeting(false),
-      GREETING_SHOW_DELAY_MS + GREETING_VISIBLE_MS,
-    );
-    return () => {
-      clearTimeout(showTimer);
-      clearTimeout(hideTimer);
-    };
-  }, []);
+  // Visible only while the cursor is over the logo (or the bubble itself),
+  // and never while the chat panel is already open. No automatic pop on
+  // page load or refresh.
+  const greetingVisible = hoverGreeting && !open;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -260,7 +244,6 @@ export default function FloatingChatWidget() {
 
   function openChat() {
     setOpen(true);
-    setAutoGreeting(false);
     setHoverGreeting(false);
     if (hoverHideTimeout.current) {
       clearTimeout(hoverHideTimeout.current);
