@@ -84,6 +84,7 @@ const Header = styled.div`
 
 const Messages = styled.div`
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 1rem;
   display: flex;
@@ -216,9 +217,16 @@ export default function FloatingChatWidget() {
   // page load or refresh.
   const greetingVisible = hoverGreeting && !open;
 
+  // Follows new content to the bottom, but only if the user was already
+  // near the bottom. If they have scrolled up to reread something, a
+  // reply streaming in should not yank the view back down on them.
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const el = scrollRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const wasNearBottom = distanceFromBottom < 100;
+    if (wasNearBottom) {
+      el.scrollTop = el.scrollHeight;
     }
   }, [messages, loading]);
 
