@@ -358,7 +358,7 @@ export default function FloatingChatWidget() {
       {open && (
         <Panel>
           <Header>Jarvis</Header>
-          <Messages ref={scrollRef}>
+          <Messages ref={scrollRef} data-lenis-prevent>
             {messages.map((m, i) => {
               const isStreamingPlaceholder =
                 m.role === 'assistant' && m.content === '' && loading && i === messages.length - 1;
