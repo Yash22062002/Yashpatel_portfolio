@@ -26,7 +26,7 @@ const projects = [
     description:
       'A bulk RNA sequencing pipeline (FastQC and MultiQC, STAR, Salmon, DESeq2, KEGG and GO enrichment) exploring transcriptomic crosstalk between multiple myeloma cells and bone marrow adipocytes. Identified candidate biomarkers on both sides of the interaction, including SERF1A and CYP1A1 downregulated and DHRSX and IL10 upregulated in myeloma cells, and characterized NF-kB and cytokine signalling dysregulation relevant to drug discovery. Presented as a poster.',
     tags: ['STAR', 'Salmon', 'DESeq2', 'FastQC / MultiQC'],
-    link: { type: 'private' },
+    link: { type: 'github', url: `${GITHUB_URL}/transcriptomics_project` },
   },
   {
     title: 'Whole Exome Sequencing: Variant Calling Pipeline (hg38)',
