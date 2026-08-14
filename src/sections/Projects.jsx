@@ -44,7 +44,7 @@ const projects = [
     description:
       'Analysis of lipidomic and gene expression data in R to investigate pancreatic beta cell dysfunction during diabetes progression. Built an elastic net regression model for biomarker prioritization, applied PCA and hierarchical clustering to find patterns across diabetes types, and correlated candidate molecular features with clinical traits including HbA1c and BMI.',
     tags: ['R', 'glmnet', 'PCA', 'Biostatistics'],
-    link: { type: 'private' },
+    link: { type: 'github', url: `${GITHUB_URL}/Statistics-Project-Work` },
   },
   {
     title: 'This Portfolio, and the Jarvis Chat Assistant',
