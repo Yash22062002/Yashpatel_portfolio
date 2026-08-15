@@ -1,172 +1,224 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import Reveal from '../components/Reveal.jsx';
 import SectionIntro from '../components/SectionIntro.jsx';
-import { GithubIcon, ExternalLinkIcon, LockIcon } from '../components/Icons.jsx';
+import { GithubIcon, ExternalLinkIcon, ArrowRightIcon } from '../components/Icons.jsx';
 import { GITHUB_URL } from '../config.js';
-
-const filters = ['All', 'Genomics', 'HPC', 'Biostatistics', 'Web App', 'AI'];
 
 const projects = [
   {
-    title: 'Comparative Genomics: SAE Detection Across 120 Mammals',
-    categories: ['Genomics', 'HPC'],
-    team: false,
-    description:
-      'A comparative genomics pipeline detecting synonymous accelerated elements (SAEs) across 120 mammalian genomes. Screened roughly 20,000 human protein coding genes using MAFfilter and the FRESCo algorithm, ran 300 parallel SLURM array jobs on the Northeastern Discovery HPC cluster, and found a 20 to 40 percent increase in SAE detection compared to an earlier 29 species dataset, while cutting overall compute time by roughly 70 percent through workflow optimization.',
-    image: `${import.meta.env.BASE_URL}projects/sae-detection-comparison.png`,
-    imageCaption: 'Gene by gene SAE detection, 120 species versus 29 species.',
-    tags: ['Python', 'R', 'HPC / SLURM', 'HyPhy / FRESCo', 'BEDTools'],
-    link: { type: 'github', url: `${GITHUB_URL}/BINF7700_Capstone_Yash` },
+    id: 'comparative-genomics',
+    kicker: 'Comparative Genomics · HPC',
+    title: 'Detecting Synonymous Accelerated Elements Across 120 Mammals',
+    // The headline result leads, because it is the one line a hiring
+    // manager will actually retain from the whole card.
+    result: '20 to 40% more accelerated elements detected than the prior 29 species baseline',
+    summary:
+      'My MSc capstone: a genome scale comparative genomics pipeline searching for regions where synonymous mutations, usually assumed to be silent, are evolving unusually fast. Deeper phylogenetic sampling turned out to matter substantially.',
+    bullets: [
+      'Screened roughly 20,000 human protein coding genes against 120 mammalian genome alignments, over 200GB of multiple alignment data.',
+      'Converted whole genome MAF alignments to gene level FASTA with MAFfilter, plus custom Python gap correction, validated at 100% BLAST accuracy.',
+      'Ran 300 parallel SLURM array jobs on the Northeastern Discovery cluster, 298 completing successfully, yielding 278 high confidence gene outputs.',
+      'Applied Bonferroni correction across roughly 431 sliding windows per gene to control false positives.',
+      'Cut total compute time by around 70% through modular job scripts and container ready execution.',
+    ],
+    stack: ['Python', 'R', 'Bash', 'SLURM / HPC', 'MAFfilter', 'FRESCo', 'BEDTools'],
+    figure: `${import.meta.env.BASE_URL}projects/sae-detection-comparison.png`,
+    figureAlt:
+      'Scatter plot of accelerated elements detected per gene, 120 species dataset on the vertical axis against 29 species on the horizontal, with most points falling above the diagonal.',
+    figureCaption:
+      'Per gene comparison of detected elements. Points above the diagonal are genes where the 120 species dataset found more than the 29 species dataset: 137 of 152 genes improved.',
+    links: [{ type: 'code', url: `${GITHUB_URL}/BINF7700_Capstone_Yash` }],
   },
   {
-    title: 'RNA Sequencing: Multiple Myeloma and Adipocyte Crosstalk',
-    categories: ['Genomics'],
-    team: true,
-    description:
-      'A bulk RNA sequencing pipeline (FastQC and MultiQC, STAR, Salmon, DESeq2, KEGG and GO enrichment) exploring transcriptomic crosstalk between multiple myeloma cells and bone marrow adipocytes. Identified candidate biomarkers on both sides of the interaction, including SERF1A and CYP1A1 downregulated and DHRSX and IL10 upregulated in myeloma cells, and characterized NF-kB and cytokine signalling dysregulation relevant to drug discovery. Presented as a poster.',
-    tags: ['STAR', 'Salmon', 'DESeq2', 'FastQC / MultiQC'],
-    link: { type: 'github', url: `${GITHUB_URL}/transcriptomics_project` },
+    id: 'rnaseq-myeloma',
+    kicker: 'Transcriptomics · Team Project',
+    title: 'Multiple Myeloma and Adipocyte Crosstalk',
+    result: 'Identified candidate biomarkers on both sides of the tumour and adipocyte interaction',
+    summary:
+      'A bulk RNA sequencing study of how multiple myeloma cells and bone marrow adipocytes influence each other, using Transwell co-culture data from the Regan lab at the MaineHealth Institute for Research.',
+    bullets: [
+      'Built the analysis pipeline end to end: FastQC and MultiQC for quality control, STAR for alignment, Salmon for quantification, DESeq2 for differential expression.',
+      'In myeloma cells, SERF1A, CYP1A1 and GAREM1 were most downregulated, while DHRSX, CFH and IL10 were most upregulated.',
+      'Characterised NF-kB and cytokine signalling dysregulation, pointing at immune mediated mechanisms with potential as therapeutic targets.',
+      'Ran functional enrichment across KEGG and GO, and presented the work as a research poster.',
+    ],
+    stack: ['STAR', 'Salmon', 'DESeq2', 'FastQC / MultiQC', 'Singularity', 'R'],
+    links: [{ type: 'code', url: `${GITHUB_URL}/transcriptomics_project` }],
   },
   {
-    title: 'Whole Exome Sequencing: Variant Calling Pipeline (hg38)',
-    categories: ['Genomics'],
-    team: false,
-    description:
-      'A variant calling pipeline for whole exome sequencing data aligned to the human reference genome (hg38), performing SNP and indel detection with GATK and bcftools, including quality filtering and annotation.',
-    tags: ['GATK', 'bcftools', 'hg38'],
-    link: null,
+    id: 'diabetes-multiomics',
+    kicker: 'Biostatistics · Team Project',
+    title: 'Multiomics Analysis of Pancreatic Beta Cell Dysfunction',
+    result: 'Prioritised lipidomic and transcriptomic features linked to diabetes progression',
+    summary:
+      'A statistical investigation of how pancreatic beta cells fail as type 2 diabetes progresses, integrating lipidomic and gene expression data rather than treating either in isolation.',
+    bullets: [
+      'Built an elastic net regression model with glmnet for feature selection and biomarker prioritisation across high dimensional data.',
+      'Applied PCA and hierarchical clustering to surface patterns separating diabetes types.',
+      'Correlated candidate molecular features against clinical traits including HbA1c and BMI.',
+      'Designed normalisation, transformation and outlier removal steps to keep the statistics defensible.',
+    ],
+    stack: ['R', 'glmnet', 'PCA', 'Clustering', 'ggplot2'],
+    links: [{ type: 'code', url: `${GITHUB_URL}/Statistics-Project-Work` }],
   },
   {
-    title: 'Biostatistical Analysis of Multiomics Diabetes Data',
-    categories: ['Biostatistics'],
-    team: true,
-    description:
-      'Analysis of lipidomic and gene expression data in R to investigate pancreatic beta cell dysfunction during diabetes progression. Built an elastic net regression model for biomarker prioritization, applied PCA and hierarchical clustering to find patterns across diabetes types, and correlated candidate molecular features with clinical traits including HbA1c and BMI.',
-    tags: ['R', 'glmnet', 'PCA', 'Biostatistics'],
-    link: { type: 'github', url: `${GITHUB_URL}/Statistics-Project-Work` },
+    id: 'variant-calling',
+    kicker: 'Genomics · Pipeline',
+    title: 'Whole Exome Variant Calling Against hg38',
+    result: 'SNP and indel detection with quality filtering and annotation',
+    summary:
+      'A variant calling pipeline for whole exome sequencing data aligned to the human reference genome, built to the standard GATK best practice workflow.',
+    bullets: [
+      'Aligned whole exome reads to the hg38 human reference genome.',
+      'Detected SNPs and indels using GATK alongside bcftools.',
+      'Applied quality filtering and variant annotation to produce a usable, interpretable call set.',
+    ],
+    stack: ['GATK', 'bcftools', 'samtools', 'hg38'],
+    links: [],
   },
   {
-    title: 'This Portfolio, and the Jarvis Chat Assistant',
-    categories: ['Web App', 'AI'],
-    team: false,
-    description:
-      'This site itself: a React and Vite front end with a Three.js and GSAP animated hero, paired with a FastAPI backend that streams responses from the Claude API to power the floating Jarvis chat widget. Deployed across GitHub Pages and Render.',
-    tags: ['React', 'Vite', 'Three.js', 'FastAPI', 'Claude API'],
-    link: {
-      type: 'github',
-      url: `${GITHUB_URL}/Yashpatel_portfolio`,
-      live: 'https://yash22062002.github.io/Yashpatel_portfolio/',
-    },
+    id: 'portfolio',
+    kicker: 'Web Application · AI',
+    title: 'This Portfolio, and the Jarvis Assistant',
+    result: 'A React front end and FastAPI backend running an AI assistant that answers questions about my work',
+    summary:
+      'The site you are reading. Built to be a working demonstration of the software side of my skill set rather than a template, including the floating assistant in the corner.',
+    bullets: [
+      'React and Vite front end, with an animated DNA helix built from raw Three.js geometry rather than an imported model.',
+      'FastAPI backend that streams responses from the Claude API, keeping the API key server side since a static host cannot hold secrets.',
+      'Deployed across two services, GitHub Pages for the front end and Render for the backend, with per IP rate limiting and a scheduled health ping.',
+    ],
+    stack: ['React', 'Vite', 'Three.js', 'GSAP', 'FastAPI', 'Python'],
+    links: [
+      { type: 'code', url: `${GITHUB_URL}/Yashpatel_portfolio` },
+      { type: 'live', url: 'https://yash22062002.github.io/Yashpatel_portfolio/' },
+    ],
   },
 ];
 
-const FilterRow = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
-`;
-
-const FilterPill = styled.button`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.8rem;
-  padding: 0.45rem 1rem;
-  border-radius: 999px;
-  border: 1px solid ${({ theme, $active }) =>
-    $active ? theme.colors.accentA : theme.colors.border};
-  background: ${({ theme, $active }) =>
-    $active ? 'rgba(45, 212, 191, 0.12)' : 'transparent'};
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.accentA : theme.colors.textDim};
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-`;
-
-const Card = styled.div`
+const List = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 1.75rem;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radius};
-  background: ${({ theme }) => theme.colors.surface};
+  gap: 6rem;
+
+  @media (max-width: 860px) {
+    gap: 4rem;
+  }
 `;
 
-const TopRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.85rem;
+const Case = styled.article`
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 3rem;
+  align-items: start;
+
+  /* Alternating the column order keeps a long vertical run of case
+     studies from reading like a single repeated template. */
+  &:nth-child(even) > div:first-child {
+    order: 2;
+  }
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+
+    &:nth-child(even) > div:first-child {
+      order: 0;
+    }
+  }
 `;
 
-const CategoryLabel = styled.span`
+const Body = styled.div`
+  min-width: 0;
+`;
+
+/* On a wide screen the figure holds still while the methods scroll past
+   it, so the plot stays in view exactly while it is being explained. */
+const Aside = styled.div`
+  min-width: 0;
+
+  @media (min-width: 861px) {
+    position: sticky;
+    top: 7rem;
+  }
+`;
+
+const Kicker = styled.p`
   font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   color: ${({ theme }) => theme.colors.accentA};
-`;
-
-const TeamBadge = styled.span`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.68rem;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  color: ${({ theme }) => theme.colors.textDim};
+  margin: 0 0 0.9rem;
 `;
 
 const Title = styled.h3`
-  font-size: 1.1rem;
-  margin: 0 0 0.75rem;
-  line-height: 1.35;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  margin: 0 0 1.1rem;
+  max-width: 22ch;
 `;
 
-const Description = styled.p`
-  font-size: 0.92rem;
+const Result = styled.p`
+  font-size: 1.02rem;
+  color: ${({ theme }) => theme.colors.text};
+  font-weight: 500;
+  margin: 0 0 1.1rem;
+  padding-left: 1rem;
+  border-left: 2px solid ${({ theme }) => theme.colors.accentA};
+`;
+
+const Summary = styled.p`
   color: ${({ theme }) => theme.colors.textDim};
-  line-height: 1.6;
-  margin: 0 0 1.1rem;
-  flex-grow: 1;
+  margin: 0 0 1.6rem;
 `;
 
-const Figure = styled.figure`
-  margin: 0 0 1.1rem;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f4f6f8;
-  border: 1px solid ${({ theme }) => theme.colors.border};
+const MethodLabel = styled.p`
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: ${({ theme }) => theme.colors.textFaint};
+  margin: 0 0 0.75rem;
+`;
 
-  img {
-    display: block;
-    width: 100%;
+const Bullets = styled.ul`
+  list-style: none;
+  margin: 0 0 1.75rem;
+  padding: 0;
+
+  li {
+    position: relative;
+    padding-left: 1.35rem;
+    margin-bottom: 0.7rem;
+    color: ${({ theme }) => theme.colors.textDim};
+    font-size: 0.94rem;
+    line-height: 1.6;
   }
 
-  figcaption {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.75rem;
-    color: #5b6472;
-    background: #eef1f4;
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.colors.accentA};
+    opacity: 0.75;
   }
 `;
 
-const TagRow = styled.div`
+const Stack = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.6rem;
 `;
 
-const Tag = styled.span`
+const Chip = styled.span`
   font-family: ${({ theme }) => theme.font.mono};
   font-size: 0.72rem;
-  padding: 0.28rem 0.6rem;
+  padding: 0.3rem 0.62rem;
   border-radius: 6px;
   background: ${({ theme }) => theme.colors.surfaceAlt};
   color: ${({ theme }) => theme.colors.textDim};
@@ -174,111 +226,189 @@ const Tag = styled.span`
 
 const LinkRow = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.88rem;
-  padding-top: 1rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  margin-top: auto;
+  flex-wrap: wrap;
+  gap: 1.25rem;
 `;
 
-const CodeLink = styled.a`
+const ProjectLink = styled.a`
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  color: ${({ theme }) => theme.colors.text};
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   text-decoration: none;
+  color: ${({ theme }) => theme.colors.text};
+  padding-bottom: 2px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderStrong};
+  transition: color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
 
   &:hover {
     color: ${({ theme }) => theme.colors.accentA};
+    border-bottom-color: ${({ theme }) => theme.colors.accentA};
+  }
+
+  svg:last-child {
+    transition: transform var(--dur-fast) var(--ease);
+  }
+
+  &:hover svg:last-child {
+    transform: translateX(3px);
   }
 `;
 
-const PrivateNote = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: ${({ theme }) => theme.colors.textDim};
-`;
+const Figure = styled.figure`
+  margin: 0;
+  border-radius: ${({ theme }) => theme.radiusLg};
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surface};
 
-function LinkFooter({ link }) {
-  if (!link) return null;
-
-  if (link.type === 'private') {
-    return (
-      <LinkRow>
-        <PrivateNote>
-          <LockIcon size={13} />
-          Code not yet published
-        </PrivateNote>
-      </LinkRow>
-    );
+  /* Scientific plots are drawn on white and recolouring them would
+     misrepresent the data, so the white is kept but inset on a padded
+     mat. It reads as a figure mounted on the page rather than a bright
+     hole punched through the dark layout. */
+  .mat {
+    background: #ffffff;
+    padding: 0.75rem;
   }
 
-  return (
-    <LinkRow>
-      <CodeLink href={link.url} target="_blank" rel="noreferrer">
-        <GithubIcon size={16} />
-        View on GitHub
-      </CodeLink>
-      {link.live && (
-        <CodeLink href={link.live} target="_blank" rel="noreferrer">
-          <ExternalLinkIcon size={13} />
-          Live site
-        </CodeLink>
-      )}
-    </LinkRow>
-  );
-}
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  figcaption {
+    padding: 0.85rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: ${({ theme }) => theme.colors.textDim};
+    background: ${({ theme }) => theme.colors.surface};
+    border-top: 1px solid ${({ theme }) => theme.colors.border};
+    max-width: none;
+  }
+`;
+
+/* Projects without a figure still need something in the second column,
+   so the toolchain is promoted into a panel rather than leaving a gap. */
+const StackPanel = styled.div`
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radiusLg};
+  background: ${({ theme }) => theme.colors.surface};
+  padding: 1.5rem;
+`;
+
+const PanelLabel = styled.p`
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: ${({ theme }) => theme.colors.textFaint};
+  margin: 0 0 1rem;
+`;
+
+const PanelGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const PanelChip = styled.span`
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 0.78rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+const LINK_LABEL = {
+  code: 'View the code',
+  live: 'Open the live site',
+};
 
 export default function Projects() {
-  const [active, setActive] = useState('All');
-  const visible =
-    active === 'All'
-      ? projects
-      : projects.filter((p) => p.categories.includes(active));
-
   return (
     <section id="projects">
       <SectionIntro
-        index="04"
-        eyebrow="// projects/"
+        index="02"
+        eyebrow="// selected_work"
         title="Projects"
-        subtitle="Pipelines and analyses spanning comparative genomics, transcriptomics, and biostatistics, plus the software behind this site."
+        subtitle="Five pieces of work, from a genome scale comparative analysis run on an HPC cluster to the application serving this page."
       />
-      <FilterRow>
-        {filters.map((f) => (
-          <FilterPill key={f} $active={f === active} onClick={() => setActive(f)}>
-            {f}
-          </FilterPill>
+      <List>
+        {projects.map((p) => (
+          <Case key={p.id} aria-labelledby={`${p.id}-title`}>
+            <Body>
+              <Reveal>
+                <Kicker>{p.kicker}</Kicker>
+                <Title id={`${p.id}-title`}>{p.title}</Title>
+                <Result>{p.result}</Result>
+                <Summary>{p.summary}</Summary>
+                <MethodLabel>What I did</MethodLabel>
+                <Bullets>
+                  {p.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </Bullets>
+                {/* When there is no figure the aside shows the toolchain
+                    instead, so listing it inline here as well would just
+                    repeat itself. */}
+                {p.figure && (
+                  <Stack>
+                    {p.stack.map((s) => (
+                      <Chip key={s}>{s}</Chip>
+                    ))}
+                  </Stack>
+                )}
+                {p.links.length > 0 && (
+                  <LinkRow>
+                    {p.links.map((l) => (
+                      <ProjectLink
+                        key={l.url}
+                        href={l.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {l.type === 'code' ? (
+                          <GithubIcon size={16} />
+                        ) : (
+                          <ExternalLinkIcon size={15} />
+                        )}
+                        {LINK_LABEL[l.type]}
+                        <ArrowRightIcon size={14} />
+                      </ProjectLink>
+                    ))}
+                  </LinkRow>
+                )}
+              </Reveal>
+            </Body>
+            <Aside>
+              <Reveal delay={0.08}>
+                {p.figure ? (
+                  <Figure>
+                    <div className="mat">
+                      <img src={p.figure} alt={p.figureAlt} loading="lazy" />
+                    </div>
+                    <figcaption>{p.figureCaption}</figcaption>
+                  </Figure>
+                ) : (
+                  <StackPanel>
+                    <PanelLabel>Toolchain</PanelLabel>
+                    <PanelGrid>
+                      {p.stack.map((s) => (
+                        <PanelChip key={s}>{s}</PanelChip>
+                      ))}
+                    </PanelGrid>
+                  </StackPanel>
+                )}
+              </Reveal>
+            </Aside>
+          </Case>
         ))}
-      </FilterRow>
-      <Grid>
-        {visible.map((p, i) => (
-          <Reveal key={p.title} delay={i * 0.04}>
-            <Card>
-              <TopRow>
-                <CategoryLabel>{p.categories[0]}</CategoryLabel>
-                {p.team && <TeamBadge>Team project</TeamBadge>}
-              </TopRow>
-              <Title>{p.title}</Title>
-              {p.image && (
-                <Figure>
-                  <img src={p.image} alt={p.imageCaption} loading="lazy" />
-                  <figcaption>{p.imageCaption}</figcaption>
-                </Figure>
-              )}
-              <Description>{p.description}</Description>
-              <TagRow>
-                {p.tags.map((tag) => (
-                  <Tag key={tag}>{tag}</Tag>
-                ))}
-              </TagRow>
-              <LinkFooter link={p.link} />
-            </Card>
-          </Reveal>
-        ))}
-      </Grid>
+      </List>
     </section>
   );
 }

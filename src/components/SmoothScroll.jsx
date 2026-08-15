@@ -7,19 +7,30 @@ export default function SmoothScroll({ children }) {
   const lenisRef = useRef(null);
 
   useEffect(() => {
+    // Momentum scrolling is itself motion, and it is the kind that can
+    // trigger nausea for people who are sensitive to it. If the system
+    // asks for reduced motion, leave the browser's native scrolling
+    // completely alone.
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return undefined;
+
     const lenis = new Lenis({
       duration: 1.1,
       smoothWheel: true,
     });
     lenisRef.current = lenis;
 
+    let frame;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      frame = requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
+    frame = requestAnimationFrame(raf);
 
-    return () => lenis.destroy();
+    return () => {
+      cancelAnimationFrame(frame);
+      lenis.destroy();
+    };
   }, []);
 
   return children;

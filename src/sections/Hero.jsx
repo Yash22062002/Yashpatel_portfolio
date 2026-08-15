@@ -22,7 +22,9 @@ const TextCol = styled.div`
 
   @media (max-width: 860px) {
     text-align: center;
-    order: 2;
+    /* Name and role come before the animation on a phone, so the first
+       thing painted is real content rather than an empty canvas. */
+    order: 1;
   }
 `;
 
@@ -31,8 +33,8 @@ const CanvasCol = styled.div`
   height: 560px;
 
   @media (max-width: 860px) {
-    height: 320px;
-    order: 1;
+    height: 300px;
+    order: 2;
   }
 `;
 
@@ -148,38 +150,6 @@ const Pulse = styled.span`
   }
 `;
 
-const StatsRow = styled.div`
-  display: flex;
-  gap: 2.5rem;
-  margin-top: 3rem;
-  flex-wrap: wrap;
-
-  @media (max-width: 860px) {
-    justify-content: center;
-    text-align: center;
-  }
-`;
-
-const StatNumber = styled.p`
-  font-family: ${({ theme }) => theme.font.display};
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.accentA};
-  margin: 0;
-`;
-
-const StatLabel = styled.p`
-  font-size: 0.82rem;
-  color: ${({ theme }) => theme.colors.textDim};
-  margin: 0.15rem 0 0;
-`;
-
-const stats = [
-  { number: '120+', label: 'mammalian species analyzed' },
-  { number: '20K+', label: 'genes screened for SAEs' },
-  { number: '300', label: 'parallel SLURM jobs run' },
-];
-
 const PrimaryButton = styled.a`
   display: inline-block;
   padding: 0.85rem 1.6rem;
@@ -237,14 +207,6 @@ export default function Hero() {
           <PrimaryButton href="#projects">View my work</PrimaryButton>
           <SecondaryButton href="#contact">Get in touch</SecondaryButton>
         </Actions>
-        <StatsRow>
-          {stats.map((s) => (
-            <div key={s.label}>
-              <StatNumber>{s.number}</StatNumber>
-              <StatLabel>{s.label}</StatLabel>
-            </div>
-          ))}
-        </StatsRow>
       </TextCol>
       <CanvasCol>
         <DNAHelix />

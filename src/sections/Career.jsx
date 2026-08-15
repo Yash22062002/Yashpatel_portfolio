@@ -286,7 +286,7 @@ export default function Career() {
   return (
     <section id="career">
       <SectionIntro
-        index="02"
+        index="04"
         eyebrow="// career.log"
         title="Career"
         subtitle="Bridging pharmacy operations and computational biology, in Toronto and in India."
