@@ -63,6 +63,6 @@ keep a secret.
 ## Related repositories
 
 - Backend service: [Dashboard_backend](https://github.com/Yash22062002/Dashboard_backend)
-- Comparative genomics capstone: [BINF7700_Capstone_Yash](https://github.com/Yash22062002/BINF7700_Capstone_Yash)
+
 
 Built by [Yash Patel](https://www.linkedin.com/in/yash-patel-network).
