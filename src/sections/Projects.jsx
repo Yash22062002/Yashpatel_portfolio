@@ -71,7 +71,48 @@ const projects = [
       'Ran functional enrichment across KEGG and GO, and presented the work as a research poster.',
     ],
     stack: ['STAR', 'Salmon', 'DESeq2', 'FastQC / MultiQC', 'Singularity', 'R'],
-    figures: [],
+    figures: [
+      {
+        src: `${BASE}projects/myeloma-bmat-go-network.jpg`,
+        alt: 'Network plot of enriched Gene Ontology biological process terms in adipocytes, showing clusters around biological regulation and around immune and transport related processes.',
+        caption: 'Gene Ontology enrichment in adipocytes, shown as a network of connected biological process terms.',
+      },
+      {
+        src: `${BASE}projects/myeloma-bmat-disease-enrichment.jpg`,
+        alt: 'Dot plot of disease ontology enrichment, with organ system cancer and disease of cellular proliferation showing the strongest gene ratio.',
+        caption: 'Disease ontology enrichment for the same gene set, cancer related terms stand out clearly.',
+      },
+      {
+        src: `${BASE}projects/myeloma-bmat-kegg-enrichment.jpg`,
+        alt: 'Dot plot of KEGG pathway enrichment, led by the JAK-STAT signaling pathway.',
+        caption: 'KEGG pathway enrichment, the JAK-STAT and TNF signaling pathways lead the list.',
+      },
+      {
+        src: `${BASE}projects/myeloma-bmat-volcano.jpg`,
+        alt: 'Volcano plot titled BMAT alone versus co-cultured, with genes including HYDIN, TRHDE, and CORO7-PAM16 labelled as significant.',
+        caption: 'Differential expression in adipocytes, alone versus co-cultured with myeloma cells.',
+      },
+      {
+        src: `${BASE}projects/myeloma-mm-go-network.jpg`,
+        alt: 'Network plot of enriched Gene Ontology biological process terms in myeloma cells, centred on inflammatory response and immune effector process.',
+        caption: 'Gene Ontology enrichment in myeloma cells, centred on inflammatory and immune response.',
+      },
+      {
+        src: `${BASE}projects/myeloma-mm-go-enrichment-dotplot.jpg`,
+        alt: 'Dot plot of the same Gene Ontology terms as the myeloma network plot, ranked by gene ratio.',
+        caption: 'The same myeloma enrichment result, ranked as a dot plot rather than a network.',
+      },
+      {
+        src: `${BASE}projects/myeloma-mm-bp-enrichment.jpg`,
+        alt: 'Dot plot of additional biological process enrichment in myeloma cells, led by endocytosis and phagocytosis.',
+        caption: 'A second biological process view, endocytosis and phagocytosis emerge as the top terms.',
+      },
+      {
+        src: `${BASE}projects/myeloma-mm-volcano.jpg`,
+        alt: 'Volcano plot titled MM alone versus co-cultured, with genes including SERF1A, GAREM1, IL10, and CFH labelled as significant.',
+        caption: 'Differential expression in myeloma cells, alone versus co-cultured with adipocytes. SERF1A and GAREM1 fall furthest, IL10 and CFH rise furthest.',
+      },
+    ],
     links: [{ type: 'code', url: `${GITHUB_URL}/transcriptomics_project` }],
   },
   {
@@ -88,7 +129,43 @@ const projects = [
       'Designed normalisation, transformation and outlier removal steps to keep the statistics defensible.',
     ],
     stack: ['R', 'glmnet', 'PCA', 'Clustering', 'ggplot2'],
-    figures: [],
+    figures: [
+      {
+        src: `${BASE}projects/diabetes-boxplot-outliers.png`,
+        alt: 'Two boxplots comparing lipid concentration data before and after outlier removal, with the after version showing a tighter, cleaner spread.',
+        caption: 'Lipid concentration data before and after outlier removal, part of cleaning the data for analysis.',
+      },
+      {
+        src: `${BASE}projects/diabetes-lipid-distribution.png`,
+        alt: 'Histogram with a density curve showing the distribution of lipid concentration, roughly bimodal in shape.',
+        caption: 'Distribution of lipid concentration across the cohort, with a density curve overlaid.',
+      },
+      {
+        src: `${BASE}projects/diabetes-qqplot.png`,
+        alt: 'QQ plot of lipid concentration against a normal distribution, tracking the reference line closely except at the extreme tails.',
+        caption: 'Checking normality of lipid concentration before choosing which statistical tests to apply.',
+      },
+      {
+        src: `${BASE}projects/diabetes-lipid-violin.png`,
+        alt: 'Violin plot of lipid concentration distribution split by diabetes level: no diabetes, impaired glucose tolerance, and two type 2 diabetes stages.',
+        caption: 'Lipid concentration distribution across diabetes progression stages.',
+      },
+      {
+        src: `${BASE}projects/diabetes-gene-expression-violin.png`,
+        alt: 'Violin plot of gene expression distribution split by diabetes level, from the RNA sequencing data.',
+        caption: 'Gene expression distribution across the same diabetes progression stages, from the RNA sequencing data.',
+      },
+      {
+        src: `${BASE}projects/diabetes-correlation-lipid.png`,
+        alt: 'Correlation matrix of age, BMI, OGTT, HbA1c, and lipid concentration, with age and HbA1c showing the strongest correlation.',
+        caption: 'Correlating lipid concentration against clinical variables including age, BMI, OGTT, and HbA1c.',
+      },
+      {
+        src: `${BASE}projects/diabetes-correlation-rnaseq.png`,
+        alt: 'Correlation matrix of age, BMI, OGTT, HbA1c, and gene expression from the RNA sequencing data.',
+        caption: 'The same clinical correlation check, run against the gene expression data instead.',
+      },
+    ],
     links: [{ type: 'code', url: `${GITHUB_URL}/Statistics-Project-Work` }],
   },
   {

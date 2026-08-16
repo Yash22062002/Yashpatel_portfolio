@@ -135,6 +135,22 @@ export function ShieldIcon({ size = 20 }) {
   );
 }
 
+export function ChevronLeftIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M15 5 8 12l7 7" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
 export function MenuIcon({ size = 22 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
