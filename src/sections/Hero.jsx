@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import DNAHelix from '../components/DNAHelix.jsx';
+import HeroTree from '../components/HeroTree.jsx';
 import TypedRole from '../components/TypedRole.jsx';
 import { MapPinIcon } from '../components/Icons.jsx';
 
@@ -209,7 +209,7 @@ export default function Hero() {
         </Actions>
       </TextCol>
       <CanvasCol>
-        <DNAHelix />
+        <HeroTree />
       </CanvasCol>
     </Wrap>
   );
