@@ -14,22 +14,34 @@ const Viewport = styled.div`
   position: relative;
   overflow: hidden;
   background: #ffffff;
+  /* A fixed frame ratio means every image in the gallery sits inside
+     the same shape, rather than shorter, wider images being stretched
+     tall by a taller sibling and left hanging at the top of the gap. */
+  aspect-ratio: 4 / 3;
 `;
 
 const Track = styled.div`
   display: flex;
+  height: 100%;
   transform: translateX(-${({ $index }) => $index * 100}%);
   transition: transform var(--dur-normal) var(--ease);
 `;
 
 const Slide = styled.div`
   flex: 0 0 100%;
+  height: 100%;
   padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     display: block;
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
+    object-fit: contain;
     border-radius: 4px;
   }
 `;

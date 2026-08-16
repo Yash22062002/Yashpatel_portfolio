@@ -10,11 +10,6 @@ const certifications = [
     when: 'January 2025',
   },
   {
-    title: 'Pharmacy Assistant Certificate',
-    org: 'Udemy',
-    when: 'In progress',
-  },
-  {
     title: 'Unconscious Bias in Medicine',
     org: 'Stanford University School of Medicine',
     when: '2023',
@@ -30,7 +25,7 @@ const leadership = [
   {
     title: 'Program Advisory Committee Member, Student Representative',
     org: 'Northeastern University',
-    when: 'October 2024 to Present',
+    when: 'October 2024 to June 2026',
   },
   {
     title: 'Project Presenter, Presidential Visit',
