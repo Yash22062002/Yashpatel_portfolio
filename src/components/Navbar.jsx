@@ -11,8 +11,8 @@ import { GITHUB_URL, LINKEDIN_URL, RESUME_URL } from '../config.js';
 
 const NAV_LINKS = [
   ['About', '#about'],
-  ['Projects', '#projects'],
   ['Skills', '#skills'],
+  ['Projects', '#projects'],
   ['Career', '#career'],
   ['Certifications', '#certifications'],
   ['Contact', '#contact'],

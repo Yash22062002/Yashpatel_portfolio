@@ -146,7 +146,7 @@ export default function Skills() {
   return (
     <section id="skills">
       <SectionIntro
-        index="03"
+        index="02"
         eyebrow="// skills.json"
         title="Skills"
         subtitle="A capability map spanning genomics pipelines, statistics, and machine learning, built to turn complex biological data into insight."

@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import Reveal from '../components/Reveal.jsx';
 import SectionIntro from '../components/SectionIntro.jsx';
+import ProjectGallery from '../components/ProjectGallery.jsx';
 import { GithubIcon, ExternalLinkIcon, ArrowRightIcon } from '../components/Icons.jsx';
 import { GITHUB_URL } from '../config.js';
+
+const BASE = import.meta.env.BASE_URL;
 
 const projects = [
   {
     id: 'comparative-genomics',
     kicker: 'Comparative Genomics · HPC',
     title: 'Detecting Synonymous Accelerated Elements Across 120 Mammals',
-    // The headline result leads, because it is the one line a hiring
-    // manager will actually retain from the whole card.
     result: '20 to 40% more accelerated elements detected than the prior 29 species baseline',
     summary:
       'My MSc capstone: a genome scale comparative genomics pipeline searching for regions where synonymous mutations, usually assumed to be silent, are evolving unusually fast. Deeper phylogenetic sampling turned out to matter substantially.',
@@ -22,11 +23,38 @@ const projects = [
       'Cut total compute time by around 70% through modular job scripts and container ready execution.',
     ],
     stack: ['Python', 'R', 'Bash', 'SLURM / HPC', 'MAFfilter', 'FRESCo', 'BEDTools'],
-    figure: `${import.meta.env.BASE_URL}projects/sae-detection-comparison.png`,
-    figureAlt:
-      'Scatter plot of accelerated elements detected per gene, 120 species dataset on the vertical axis against 29 species on the horizontal, with most points falling above the diagonal.',
-    figureCaption:
-      'Per gene comparison of detected elements. Points above the diagonal are genes where the 120 species dataset found more than the 29 species dataset: 137 of 152 genes improved.',
+    figures: [
+      {
+        src: `${BASE}projects/comparative-genomics-tree.png`,
+        alt: 'Circular phylogenetic tree of the 120 mammalian species used in the study, color coded by taxonomic group.',
+        caption: 'The 120 mammalian species used in the analysis, grouped by taxonomic order.',
+      },
+      {
+        src: `${BASE}projects/comparative-genomics-venn.png`,
+        alt: 'Venn diagram comparing SAE detection between the 120 species and 29 species datasets, showing 764 novel SAEs and 1013 total for 120 species against 311 total for 29 species.',
+        caption: '764 novel elements surfaced only with deeper sampling, 1,013 total against 311.',
+      },
+      {
+        src: `${BASE}projects/sae-detection-comparison.png`,
+        alt: 'Scatter plot of accelerated elements detected per gene, 120 species dataset on the vertical axis against 29 species on the horizontal, with most points falling above the diagonal.',
+        caption: 'Gene by gene comparison. 137 of 152 genes showed improved detection with the larger dataset.',
+      },
+      {
+        src: `${BASE}projects/comparative-genomics-top-genes.jpg`,
+        alt: 'Horizontal bar chart of the ten genes with the greatest increase in detected accelerated elements between the 29 species and 120 species datasets.',
+        caption: 'The ten genes where added phylogenetic depth revealed the most additional signal.',
+      },
+      {
+        src: `${BASE}projects/comparative-genomics-fresco.png`,
+        alt: 'Line plot of synonymous substitution rate across codon position for the gene ALDH9A1, comparing the 29 species and 120 species datasets across a sliding window.',
+        caption: 'The FRESCo sliding window method itself, shown for one gene, ALDH9A1.',
+      },
+      {
+        src: `${BASE}projects/comparative-genomics-overlap.png`,
+        alt: 'Genome browser style track of the gene CASZ1 with zoomed in views comparing accelerated element regions detected in the 120 species and 29 species datasets.',
+        caption: 'A real example at base pair resolution, gene CASZ1, comparing what each dataset actually detects.',
+      },
+    ],
     links: [{ type: 'code', url: `${GITHUB_URL}/BINF7700_Capstone_Yash` }],
   },
   {
@@ -43,6 +71,7 @@ const projects = [
       'Ran functional enrichment across KEGG and GO, and presented the work as a research poster.',
     ],
     stack: ['STAR', 'Salmon', 'DESeq2', 'FastQC / MultiQC', 'Singularity', 'R'],
+    figures: [],
     links: [{ type: 'code', url: `${GITHUB_URL}/transcriptomics_project` }],
   },
   {
@@ -59,6 +88,7 @@ const projects = [
       'Designed normalisation, transformation and outlier removal steps to keep the statistics defensible.',
     ],
     stack: ['R', 'glmnet', 'PCA', 'Clustering', 'ggplot2'],
+    figures: [],
     links: [{ type: 'code', url: `${GITHUB_URL}/Statistics-Project-Work` }],
   },
   {
@@ -74,6 +104,7 @@ const projects = [
       'Applied quality filtering and variant annotation to produce a usable, interpretable call set.',
     ],
     stack: ['GATK', 'bcftools', 'samtools', 'hg38'],
+    figures: [],
     links: [],
   },
   {
@@ -89,6 +120,7 @@ const projects = [
       'Deployed across two services, GitHub Pages for the front end and Render for the backend, with per IP rate limiting and a scheduled health ping.',
     ],
     stack: ['React', 'Vite', 'Three.js', 'GSAP', 'FastAPI', 'Python'],
+    figures: [],
     links: [
       { type: 'code', url: `${GITHUB_URL}/Yashpatel_portfolio` },
       { type: 'live', url: 'https://yash22062002.github.io/Yashpatel_portfolio/' },
@@ -108,14 +140,15 @@ const List = styled.div`
 
 const Case = styled.article`
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: ${({ $hasFigures }) => ($hasFigures ? '1.05fr 0.95fr' : '1fr')};
   gap: 3rem;
   align-items: start;
 
   /* Alternating the column order keeps a long vertical run of case
-     studies from reading like a single repeated template. */
+     studies from reading like a single repeated template. Only applies
+     when there is a second column to reorder in the first place. */
   &:nth-child(even) > div:first-child {
-    order: 2;
+    order: ${({ $hasFigures }) => ($hasFigures ? 2 : 0)};
   }
 
   @media (max-width: 860px) {
@@ -130,10 +163,12 @@ const Case = styled.article`
 
 const Body = styled.div`
   min-width: 0;
+  ${({ $hasFigures }) => (!$hasFigures ? 'max-width: 72ch;' : '')}
 `;
 
-/* On a wide screen the figure holds still while the methods scroll past
-   it, so the plot stays in view exactly while it is being explained. */
+/* On a wide screen the gallery holds still while the methods scroll past
+   it, so the current figure stays in view exactly while it is being
+   explained. */
 const Aside = styled.div`
   min-width: 0;
 
@@ -155,7 +190,23 @@ const Kicker = styled.p`
 const Title = styled.h3`
   font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   margin: 0 0 1.1rem;
-  max-width: 22ch;
+  max-width: 26ch;
+`;
+
+const Stack = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.4rem;
+`;
+
+const Chip = styled.span`
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 0.72rem;
+  padding: 0.3rem 0.62rem;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  color: ${({ theme }) => theme.colors.textDim};
 `;
 
 const Result = styled.p`
@@ -208,22 +259,6 @@ const Bullets = styled.ul`
   }
 `;
 
-const Stack = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.6rem;
-`;
-
-const Chip = styled.span`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.72rem;
-  padding: 0.3rem 0.62rem;
-  border-radius: 6px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
-  color: ${({ theme }) => theme.colors.textDim};
-`;
-
 const LinkRow = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -257,73 +292,6 @@ const ProjectLink = styled.a`
   }
 `;
 
-const Figure = styled.figure`
-  margin: 0;
-  border-radius: ${({ theme }) => theme.radiusLg};
-  overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.surface};
-
-  /* Scientific plots are drawn on white and recolouring them would
-     misrepresent the data, so the white is kept but inset on a padded
-     mat. It reads as a figure mounted on the page rather than a bright
-     hole punched through the dark layout. */
-  .mat {
-    background: #ffffff;
-    padding: 0.75rem;
-  }
-
-  img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-  }
-
-  figcaption {
-    padding: 0.85rem 1rem;
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: ${({ theme }) => theme.colors.textDim};
-    background: ${({ theme }) => theme.colors.surface};
-    border-top: 1px solid ${({ theme }) => theme.colors.border};
-    max-width: none;
-  }
-`;
-
-/* Projects without a figure still need something in the second column,
-   so the toolchain is promoted into a panel rather than leaving a gap. */
-const StackPanel = styled.div`
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radiusLg};
-  background: ${({ theme }) => theme.colors.surface};
-  padding: 1.5rem;
-`;
-
-const PanelLabel = styled.p`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: ${({ theme }) => theme.colors.textFaint};
-  margin: 0 0 1rem;
-`;
-
-const PanelGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`;
-
-const PanelChip = styled.span`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: 0.78rem;
-  padding: 0.4rem 0.7rem;
-  border-radius: 6px;
-  background: ${({ theme }) => theme.colors.surfaceAlt};
-  color: ${({ theme }) => theme.colors.text};
-`;
-
 const LINK_LABEL = {
   code: 'View the code',
   live: 'Open the live site',
@@ -333,81 +301,65 @@ export default function Projects() {
   return (
     <section id="projects">
       <SectionIntro
-        index="02"
+        index="03"
         eyebrow="// selected_work"
         title="Projects"
         subtitle="Five pieces of work, from a genome scale comparative analysis run on an HPC cluster to the application serving this page."
       />
       <List>
-        {projects.map((p) => (
-          <Case key={p.id} aria-labelledby={`${p.id}-title`}>
-            <Body>
-              <Reveal>
-                <Kicker>{p.kicker}</Kicker>
-                <Title id={`${p.id}-title`}>{p.title}</Title>
-                <Result>{p.result}</Result>
-                <Summary>{p.summary}</Summary>
-                <MethodLabel>What I did</MethodLabel>
-                <Bullets>
-                  {p.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </Bullets>
-                {/* When there is no figure the aside shows the toolchain
-                    instead, so listing it inline here as well would just
-                    repeat itself. */}
-                {p.figure && (
+        {projects.map((p) => {
+          const hasFigures = p.figures.length > 0;
+          return (
+            <Case key={p.id} $hasFigures={hasFigures} aria-labelledby={`${p.id}-title`}>
+              <Body $hasFigures={hasFigures}>
+                <Reveal>
+                  <Kicker>{p.kicker}</Kicker>
+                  <Title id={`${p.id}-title`}>{p.title}</Title>
                   <Stack>
                     {p.stack.map((s) => (
                       <Chip key={s}>{s}</Chip>
                     ))}
                   </Stack>
-                )}
-                {p.links.length > 0 && (
-                  <LinkRow>
-                    {p.links.map((l) => (
-                      <ProjectLink
-                        key={l.url}
-                        href={l.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {l.type === 'code' ? (
-                          <GithubIcon size={16} />
-                        ) : (
-                          <ExternalLinkIcon size={15} />
-                        )}
-                        {LINK_LABEL[l.type]}
-                        <ArrowRightIcon size={14} />
-                      </ProjectLink>
+                  <Result>{p.result}</Result>
+                  <Summary>{p.summary}</Summary>
+                  <MethodLabel>What I did</MethodLabel>
+                  <Bullets>
+                    {p.bullets.map((b) => (
+                      <li key={b}>{b}</li>
                     ))}
-                  </LinkRow>
-                )}
-              </Reveal>
-            </Body>
-            <Aside>
-              <Reveal delay={0.08}>
-                {p.figure ? (
-                  <Figure>
-                    <div className="mat">
-                      <img src={p.figure} alt={p.figureAlt} loading="lazy" />
-                    </div>
-                    <figcaption>{p.figureCaption}</figcaption>
-                  </Figure>
-                ) : (
-                  <StackPanel>
-                    <PanelLabel>Toolchain</PanelLabel>
-                    <PanelGrid>
-                      {p.stack.map((s) => (
-                        <PanelChip key={s}>{s}</PanelChip>
+                  </Bullets>
+                  {p.links.length > 0 && (
+                    <LinkRow>
+                      {p.links.map((l) => (
+                        <ProjectLink
+                          key={l.url}
+                          href={l.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {l.type === 'code' ? (
+                            <GithubIcon size={16} />
+                          ) : (
+                            <ExternalLinkIcon size={15} />
+                          )}
+                          {LINK_LABEL[l.type]}
+                          <ArrowRightIcon size={14} />
+                        </ProjectLink>
                       ))}
-                    </PanelGrid>
-                  </StackPanel>
-                )}
-              </Reveal>
-            </Aside>
-          </Case>
-        ))}
+                    </LinkRow>
+                  )}
+                </Reveal>
+              </Body>
+              {hasFigures && (
+                <Aside>
+                  <Reveal delay={0.08}>
+                    <ProjectGallery images={p.figures} />
+                  </Reveal>
+                </Aside>
+              )}
+            </Case>
+          );
+        })}
       </List>
     </section>
   );
